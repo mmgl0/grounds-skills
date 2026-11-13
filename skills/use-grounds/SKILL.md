@@ -47,7 +47,7 @@ When the CLI refuses with this message:
 
 > You have $<available> available and this run needs $<required>. Check your Credits with `grounds credits`.
 
-1. Run `grounds credits` and show the balance.
+1. Run `grounds credits` and show the balance, including any promotional Credits it names. Offers for new accounts are at https://grounds.win/start.
 2. Offer the packs `grounds credits buy 10`, `25` or `50`.
 3. Run `grounds credits buy <pack>` only for the pack the user chooses. It prints a Stripe Checkout URL and waits up to 65 minutes for payment, so run it in the background and show the user the URL as soon as it is printed. The user pays in their browser.
 4. When the user says they paid, or the wait ends, run `grounds credits` to confirm the balance, then get a new quote.
