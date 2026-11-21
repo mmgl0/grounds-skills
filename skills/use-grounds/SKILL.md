@@ -24,7 +24,7 @@ Rule that outranks everything below: the user approves each run's exact price in
 ## Price and approval
 
 1. Get the quote: run `grounds run <handle>/<name>@<version>` with its inputs and without `--yes`. With no terminal the CLI prints the price, then refuses with `This run costs money, so Grounds needs your approval. Run it again with --yes to approve the price above.` Nothing is reserved.
-2. Show the user the Author Fee, the Execution Budget and the reservation as printed, and ask whether to run it.
+2. Show the user the Author Fee, the Execution Budget and the reservation as printed, and how many files the CLI says it sends, and ask whether to run it.
 3. Only after the user answers yes to that quote, run the same command again with `--yes --budget <the Execution Budget they approved>`, written as a bare decimal without `$`: a quote showing `up to $0.05` becomes `--budget 0.05`.
 4. One approval is one run. A changed input, version or budget, and every further run, needs a new quote and a new approval.
 5. When the user declines or does not answer, do not run the Skill.
@@ -32,10 +32,12 @@ Rule that outranks everything below: the user approves each run's exact price in
 ## Run
 
 ```sh
-grounds run <handle>/<name>@<version> --input <file> --instruction "<text>" --yes --budget <bare decimal, e.g. 0.05>
+grounds run <handle>/<name>@<version> --input <file or folder> --instruction "<text>" --yes --budget <bare decimal, e.g. 0.05>
 ```
 
-- `--input <file>` is repeatable; the Skill sees each file by its file name. `--instruction` is optional text.
+- `--input <file or folder>` is repeatable. A file is sent by its file name; a folder is sent with everything in it at its paths, except hidden files and folders (names starting with `.`, such as `.env`) and `node_modules`, `dist`, `build`, `coverage` and `target`. `--instruction` is optional text.
+- When the task is about the user's project, pass the project folder, or the subfolder the task is about, with `--input`. Do not write summaries, extracts or other files for the Skill: it reads the project itself.
+- Before you send a folder, list it and look for secrets that are not hidden files, such as `secrets.json`, `credentials.*`, `*.pem` or `id_rsa`. When you find one, tell the user and ask before sending that folder; offer a subfolder without it.
 - Run it in the background, or with a shell timeout of at least 15 minutes; a run may take up to 10 minutes.
 - The CLI prints the Execution id when the run starts. When your wait is cut off before the result, run `grounds result <execution-id>`. Starting the run again is a second run, with its own quote and approval.
 - Files are saved under `grounds-results/<execution-id>/`. When the CLI says it could not save them, run the `grounds result <execution-id> --output <folder>` command it names; that neither runs nor charges again.
