@@ -13,7 +13,7 @@ Rule that outranks everything below: the user approves each run's exact price in
 
 1. Run `grounds --version`. When it fails, tell the user the CLI needs Node.js 20 or later and is installed with `curl -fsSL https://grounds.win/install.sh | sh`. Run that only after the user agrees.
 2. Run `grounds status`. When it says not signed in, or that the sign-in has expired, run `grounds login` in the background, or with a shell timeout of at least 15 minutes. It prints a URL and a code. Show both to the user exactly as printed and ask them to approve in their browser. Wait for the command to finish.
-3. A run needs a model key in the environment your shell inherits: `GROUNDS_ANTHROPIC_API_KEY`, or `ANTHROPIC_API_KEY` when that is unset. Check with `test -n "$GROUNDS_ANTHROPIC_API_KEY" || test -n "$ANTHROPIC_API_KEY"`; never print either value. When both are missing, tell the user to add `export GROUNDS_ANTHROPIC_API_KEY=<their key>` to their shell profile and restart this agent, explain that only Grounds reads this variable, so the agent's own `ANTHROPIC_API_KEY` and subscription stay as they are, link https://console.anthropic.com/settings/keys, and stop until they say it is set. Do not tell them to set `ANTHROPIC_API_KEY`: agents such as Claude Code use it for their own model calls, so setting it can move the user's agent off their subscription. Keys stay out of the conversation: ask for no key, paste no key, echo no key.
+3. A run needs a model key in the environment your shell inherits: `GROUNDS_ANTHROPIC_API_KEY`, or `ANTHROPIC_API_KEY` when that is unset. Check with `test -n "$GROUNDS_ANTHROPIC_API_KEY" || test -n "$ANTHROPIC_API_KEY"`; never print either value. When both are missing, tell the user to add `export GROUNDS_ANTHROPIC_API_KEY=<their key>` to their shell profile and restart this agent, explain that only Grounds reads this variable, so the agent's own `ANTHROPIC_API_KEY` and subscription stay as they are, link https://console.anthropic.com/settings/keys, mention that an OpenRouter key (https://openrouter.ai/settings/keys) also works in the same variable and that its own credit limit, separate from the account's credit, must cover the run's model cost, and stop until they say it is set. Do not tell them to set `ANTHROPIC_API_KEY`: agents such as Claude Code use it for their own model calls, so setting it can move the user's agent off their subscription. Keys stay out of the conversation: ask for no key, paste no key, echo no key.
 
 ## Find
 
@@ -40,6 +40,7 @@ grounds run <handle>/<name>@<version> --input <file> --instruction "<text>" --ye
 - The CLI prints the Execution id when the run starts. When your wait is cut off before the result, run `grounds result <execution-id>`. Starting the run again is a second run, with its own quote and approval.
 - Files are saved under `grounds-results/<execution-id>/`. When the CLI says it could not save them, run the `grounds result <execution-id> --output <folder>` command it names; that neither runs nor charges again.
 - Tell the user what the CLI says was charged.
+- When a run fails with the model provider refusing the request, relay the CLI's message as printed, including the OpenRouter key limit.
 
 ## Credits
 
