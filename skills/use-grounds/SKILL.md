@@ -36,9 +36,9 @@ Rule that outranks everything below: the user approves each run's exact price in
 grounds run <handle>/<name>@<version> --input <file or folder> --instruction "<text>" --yes --budget <bare decimal, e.g. 0.05>
 ```
 
-- `--input <file or folder>` is repeatable. A file is sent by its file name; a folder is sent with everything in it at its paths, except hidden files and folders (names starting with `.`, such as `.env`) and `node_modules`, `dist`, `build`, `coverage` and `target`. `--instruction` is optional text.
+- `--input <file or folder>` is repeatable. A file is sent by its file name; a folder is sent with everything in it at its paths, except hidden files and folders (names starting with `.`, such as `.env`) and `node_modules`, `dist`, `build`, `coverage` and `target`, files git ignores, and files that look like secrets (keys, certificates, files named like `secrets.json` or credentials). `--instruction` is optional text.
 - When the task is about the user's project, pass the project folder, or the subfolder the task is about, with `--input`. Do not write summaries, extracts or other files for the Skill: it reads the project itself.
-- Before you send a folder, list it and look for secrets that are not hidden files, such as `secrets.json`, `credentials.*`, `*.pem` or `id_rsa`. When you find one, tell the user and ask before sending that folder; offer a subfolder without it.
+- Before you send a folder, list it and look for secrets the CLI would still send, such as a config file holding a password. When you find one, tell the user and ask before sending that folder; offer a subfolder without it. After the run starts, tell the user which files the CLI says it left out as secrets. Never pass one of those files by name unless the user asks for that file.
 - Run it in the background, or with a shell timeout of at least 15 minutes; a run may take up to 10 minutes.
 - The CLI prints the Execution id when the run starts. When your wait is cut off before the result, run `grounds result <execution-id>`. Starting the run again is a second run, with its own quote and approval.
 - Files are saved under `grounds-results/<execution-id>/`. When the CLI says it could not save them, run the `grounds result <execution-id> --output <folder>` command it names; that neither runs nor charges again.
